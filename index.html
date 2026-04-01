@@ -801,21 +801,89 @@ circle.rf.trans{stroke:var(--a2);}
   .mode-cards{padding:10px 16px 24px;grid-template-columns:1fr;}
   .streak-banner{margin:14px 16px 0;}
 
-  /* ── Player — stack vertically ── */
-  #player{height:auto;}
-  .player-layout{flex-direction:column;height:auto;}
+  /* ── Player — full-screen mobile redesign ── */
+  #player{height:100dvh;overflow:hidden;position:fixed;inset:0;z-index:10;}
+  #player.on{display:flex;flex-direction:column;}
+  .player-layout{flex-direction:column;flex:1;overflow:hidden;position:relative;}
+
+  /* Illustration fills most of screen */
   .p-left{
-    width:100%;border-right:none;
-    border-bottom:1px solid var(--border);
-    height:62vw;min-height:240px;max-height:320px;
-    flex-shrink:0;
+    width:100%;border-right:none;border-bottom:none;
+    position:absolute;inset:0;
+    height:100%;
   }
-  .ring-wrap{bottom:58px;}
-  .p-right{padding:18px 16px 80px;}
-  .p-ex-name{font-size:20px;}
-  .up-next-box{display:none;} /* hidden on mobile — too cramped */
-  .controls{padding:9px 14px;}
-  .total-strip{padding:8px 14px;}
+  .illus-wrap{
+    height:100%;padding:0;
+    background:#0a0a12;
+  }
+  .ex-svg{
+    width:100%;height:100%;
+    object-fit:contain;
+    max-width:none;
+  }
+
+  /* Ring — centered on illustration */
+  .ring-wrap{
+    bottom:auto;
+    top:50%;left:50%;
+    transform:translate(-50%,-50%);
+  }
+  .ring-pos{width:110px;height:110px;}
+  .ring-svg{width:110px;height:110px;}
+  .ring-num{font-size:26px;}
+  .ring-lbl{font-size:9px;letter-spacing:2px;}
+  .breath-cue{font-size:8px;letter-spacing:2px;margin-top:2px;}
+
+  /* Bottom control strip — overlaid on illustration */
+  .p-bottom{
+    position:absolute;bottom:0;left:0;right:0;
+    background:linear-gradient(to top, rgba(8,9,15,1) 0%, rgba(8,9,15,.95) 70%, transparent 100%);
+    border-top:none;padding-top:20px;
+    z-index:3;
+  }
+  .total-strip{padding:6px 16px 4px;border-bottom:none;}
+  .ts-label{font-size:10px;}
+  .controls{padding:8px 14px 14px;gap:8px;}
+  .c-play{padding:14px;font-size:12px;letter-spacing:2px;}
+  .c-sec{width:46px;height:46px;}
+
+  /* Right info panel — scrollable sheet below illustration */
+  .p-right{
+    position:absolute;
+    left:0;right:0;bottom:0;
+    height:auto;max-height:42vh;
+    overflow-y:auto;
+    padding:16px 18px 120px;
+    background:var(--bg);
+    border-top:1px solid var(--border);
+    transform:translateY(100%);
+    transition:transform .3s cubic-bezier(.4,0,.2,1);
+    z-index:4;
+    /* Shown via JS toggle */
+  }
+  .p-right.peek{transform:translateY(0);}
+
+  /* Compact info bar always visible above controls */
+  .mobile-info-bar{
+    position:absolute;bottom:90px;left:0;right:0;
+    padding:10px 18px 0;z-index:3;
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+  }
+  .mib-text{flex:1;min-width:0;}
+  .mib-num{font-size:9px;letter-spacing:2px;color:var(--muted);font-family:'Syne',sans-serif;font-weight:700;margin-bottom:2px;}
+  .mib-name{font-family:'Syne',sans-serif;font-weight:800;font-size:17px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .mib-badge{flex-shrink:0;font-size:9px;letter-spacing:1px;padding:3px 9px;border-radius:100px;border:1px solid transparent;}
+  .mib-toggle{
+    flex-shrink:0;width:32px;height:32px;border-radius:50%;
+    background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;font-size:14px;color:var(--muted);
+  }
+
+  /* Hide desktop-only right panel elements on mobile */
+  .p-ex-num{display:none;}
+  .p-area-badge{display:none;}
+  .up-next-box{display:none;}
 
   /* ── Builder ── */
   #builder{height:auto;}
@@ -835,17 +903,133 @@ circle.rf.trans{stroke:var(--a2);}
   .year-cell{width:10px;height:10px;border-radius:2px;}
 }
 
-/* Slightly larger phones */
-@media(max-width:390px){
-  .p-left{height:56vw;min-height:210px;}
-  .areas-grid{grid-template-columns:1fr 1fr;}
-  .cal-cell{font-size:11px;}
+/* ════════════════════════════
+   ONBOARDING OVERLAY
+════════════════════════════ */
+#onboarding{
+  position:fixed;inset:0;z-index:200;
+  background:var(--bg);
+  display:flex;flex-direction:column;
+  overflow-y:auto;
+  animation:obIn .35s ease both;
+}
+@keyframes obIn{from{opacity:0;}to{opacity:1;}}
+#onboarding.hiding{animation:obOut .4s cubic-bezier(.4,0,1,1) forwards;}
+@keyframes obOut{from{opacity:1;transform:translateY(0);}to{opacity:0;transform:translateY(-24px);}}
+
+.ob-top{
+  padding:28px 32px 0;
+  flex-shrink:0;
+}
+.ob-logo{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:16px;
+  letter-spacing:4px;margin-bottom:32px;
+}
+.ob-logo b{color:var(--accent);}
+.ob-eyebrow{
+  font-family:'Syne',sans-serif;font-weight:700;font-size:10px;
+  letter-spacing:3px;color:var(--accent);text-transform:uppercase;
+  margin-bottom:10px;
+}
+.ob-h{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:clamp(26px,6vw,38px);line-height:1.1;
+  margin-bottom:10px;
+}
+.ob-h span{color:var(--accent);}
+.ob-sub{
+  font-size:14px;color:var(--muted);line-height:1.7;
+  max-width:480px;margin-bottom:28px;
+}
+
+.ob-areas{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:8px;padding:0 32px;flex-shrink:0;
+}
+.ob-area{
+  background:var(--s1);border:1.5px solid var(--border);
+  border-radius:14px;padding:16px 12px 14px;
+  cursor:pointer;transition:all .18s;text-align:center;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  position:relative;
+}
+.ob-area:hover{border-color:var(--muted);background:var(--s2);}
+.ob-area.sel{
+  border-color:var(--accent);
+  background:rgba(184,255,87,.06);
+}
+.ob-area-icon{
+  width:44px;height:44px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--s2);transition:background .18s;
+}
+.ob-area.sel .ob-area-icon{background:rgba(184,255,87,.1);}
+.ob-area-name{
+  font-family:'Syne',sans-serif;font-weight:700;font-size:11px;
+  line-height:1.2;letter-spacing:.3px;
+}
+.ob-area-check{
+  position:absolute;top:8px;right:8px;
+  width:18px;height:18px;border-radius:50%;
+  background:var(--accent);
+  display:none;align-items:center;justify-content:center;
+}
+.ob-area.sel .ob-area-check{display:flex;}
+
+.ob-footer{
+  padding:20px 32px 32px;flex-shrink:0;margin-top:auto;
+}
+.ob-hint{
+  font-size:11px;color:var(--muted);text-align:center;
+  margin-bottom:12px;min-height:16px;transition:opacity .2s;
+}
+.ob-cta{
+  width:100%;padding:16px;
+  background:linear-gradient(135deg,var(--accent),#57ffc4);
+  color:#08090f;font-family:'Syne',sans-serif;font-weight:800;
+  font-size:13px;letter-spacing:2px;border:none;border-radius:12px;
+  cursor:pointer;transition:all .2s;
+  opacity:.4;pointer-events:none;
+}
+.ob-cta.ready{opacity:1;pointer-events:all;}
+.ob-cta.ready:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(184,255,87,.3);}
+.ob-skip{
+  display:block;text-align:center;margin-top:12px;
+  font-size:11px;color:var(--muted);cursor:pointer;
+  background:none;border:none;letter-spacing:.5px;
+  transition:color .15s;
+}
+.ob-skip:hover{color:var(--text);}
+
+@media(max-width:680px){
+  .ob-top{padding:20px 16px 0;}
+  .ob-areas{grid-template-columns:repeat(2,1fr);padding:0 16px;gap:8px;}
+  .ob-footer{padding:16px 16px 28px;}
+  .ob-area{padding:14px 10px 12px;}
 }
 </style>
 </head>
 <body>
 
-<!-- ═══ TOPBAR ═══ -->
+<!-- ═══════════════════════════════
+     ONBOARDING (first open only)
+═══════════════════════════════ -->
+<div id="onboarding" style="display:none;">
+  <div class="ob-top">
+    <div class="ob-logo"><b>MOVE</b>LAB</div>
+    <div class="ob-eyebrow">Welcome</div>
+    <h1 class="ob-h">Where are you<br><span>feeling tight?</span></h1>
+    <p class="ob-sub">Pick your problem areas and we'll build your first session around them. No warmup needed — just show up.</p>
+  </div>
+
+  <div class="ob-areas" id="ob-areas"></div>
+
+  <div class="ob-footer">
+    <div class="ob-hint" id="ob-hint">Select at least one area to continue</div>
+    <button class="ob-cta" id="ob-cta" onclick="launchOnboarding()">START MY FIRST SESSION →</button>
+    <button class="ob-skip" onclick="skipOnboarding()">I'll explore on my own</button>
+  </div>
+</div>
 <div class="topbar">
   <div style="display:flex;align-items:center;gap:10px;">
     <button id="exit-btn" onclick="exitSession()" style="display:none;padding:7px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:var(--text);font-family:'Syne',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;cursor:pointer;transition:all .2s;" onmouseover="this.style.background='rgba(255,255,255,.12)'" onmouseout="this.style.background='rgba(255,255,255,.06)'">← EXIT</button>
@@ -1117,17 +1301,16 @@ circle.rf.trans{stroke:var(--a2);}
 ═══════════════════════════════ -->
 <div class="screen" id="player">
   <div class="player-layout">
-    <!-- LEFT -->
+    <!-- LEFT / FULL SCREEN ILLUSTRATION -->
     <div class="p-left">
       <div class="illus-wrap" id="illus-wrap">
         <img class="ex-photo" id="ex-photo" src="" alt="" style="display:none;"/>
         <svg class="ex-svg" id="ex-svg" viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;position:absolute;inset:0;"></svg>
-        <!-- Milestone flash -->
         <div class="milestone-flash" id="milestone-flash">
           <div class="ms-label" id="ms-label"></div>
         </div>
       </div>
-      <!-- Ring -->
+      <!-- Ring timer — centered over illustration -->
       <div class="ring-wrap">
         <div class="ring-pos">
           <svg class="ring-svg" viewBox="0 0 90 90">
@@ -1137,9 +1320,18 @@ circle.rf.trans{stroke:var(--a2);}
           <div class="ring-num" id="ring-num">0:00</div>
         </div>
         <div class="ring-lbl" id="ring-lbl">HOLD</div>
-        <!-- Breathing cue lives here, below the label -->
         <div class="breath-cue" id="breath-cue"></div>
       </div>
+      <!-- Mobile-only compact info bar above controls -->
+      <div class="mobile-info-bar" id="mobile-info-bar">
+        <div class="mib-text">
+          <div class="mib-num" id="mib-num">EXERCISE 1 OF 1</div>
+          <div class="mib-name" id="mib-name">—</div>
+        </div>
+        <div class="mib-badge" id="mib-badge"></div>
+        <div class="mib-toggle" onclick="toggleInfoSheet()" id="mib-toggle">↑</div>
+      </div>
+      <!-- Controls + progress bar -->
       <div class="p-bottom">
         <div class="total-strip">
           <div class="ts-label" id="ex-counter">1/1</div>
@@ -1180,8 +1372,8 @@ circle.rf.trans{stroke:var(--a2);}
         </div>
       </div>
     </div>
-    <!-- RIGHT -->
-    <div class="p-right">
+    <!-- RIGHT — desktop info panel / mobile slide-up sheet -->
+    <div class="p-right" id="p-right">
       <div class="p-ex-num" id="p-ex-num">EXERCISE 1 OF 1</div>
       <div class="p-ex-name" id="p-ex-name">—</div>
       <div class="p-area-badge" id="p-area-badge">—</div><br>
@@ -1207,14 +1399,21 @@ const AREAS = {
     {id:"hiplunge",name:"Hip Flexor Lunge",hold:45,sides:true,intensity:2,tip:"Squeeze the back glute — it releases the hip flexor further.",desc:"Deep lunge, back knee on the floor. Push hips forward and down, torso tall. The psoas and iliacus release directly, reducing anterior hip pain and lower back tension."},
     {id:"fig4",name:"Figure-4 Stretch",hold:50,sides:true,intensity:2,tip:"The closer you draw your legs to your chest, the more intense.",desc:"Lie on your back. Cross one ankle over the opposite knee. Draw both legs toward your chest. The outer glute and piriformis release — the go-to for hip impingement and sciatic-like symptoms."},
     {id:"butterfly",name:"Butterfly Hold",hold:60,sides:false,intensity:1,tip:"Press the soles of the feet together, not the ankles.",desc:"Soles of feet together, knees falling out to the sides. Hold your feet, hinge forward from the hips. The inner groin and adductors release with time and breath."},
+    {id:"hipcircle",name:"Hip CARs",hold:10,sides:true,intensity:2,tip:"Move as slowly as possible — speed cheats the range.",desc:"Standing on one leg, draw the largest possible circle with your opposite knee. Controlled Articular Rotations actively explore the full hip joint range and lubricate the capsule."},
+    {id:"clamshell",name:"Side-Lying Hip ER",hold:45,sides:true,intensity:1,tip:"Don't let the pelvis rock backward as you open.",desc:"Lie on your side, knees bent and stacked. Rotate the top knee open toward the ceiling, keeping feet together. Targets the external hip rotators and glute medius without any loading."},
+    {id:"addlunge",name:"Adductor Lunge Stretch",hold:45,sides:true,intensity:2,tip:"Shift weight sideways over one foot to feel the inner thigh.",desc:"Stand wide, toes forward. Bend one knee and shift weight over it, keeping the other leg straight and foot flat. Directly targets the adductors — often neglected until something goes wrong."},
   ]},
   "hamstrings":{label:"Hamstrings",color:"#57ffcc",combos:["hips","calves"],exercises:[
     {id:"standfold",name:"Standing Forward Fold",hold:60,sides:false,intensity:2,tip:"Hinge from the hips before letting the spine round.",desc:"Feet hip-width, hinge forward from the hips and let the torso hang heavy. Knees can be soft. Let gravity lengthen the hamstrings — no bouncing, just breathing."},
     {id:"wallham",name:"Wall Hamstring Stretch",hold:60,sides:true,intensity:2,tip:"Scoot hips closer to the wall as the stretch releases.",desc:"Lie on your back, extend one leg up the wall, other leg flat on the floor. Scoot closer to increase intensity. Sustained traction — more effective than any bouncing stretch."},
     {id:"seatfold",name:"Seated Forward Fold",hold:60,sides:false,intensity:2,tip:"Hinge from the hips first — spine long before rounding.",desc:"Sit with legs extended, flex your feet. Hinge forward from the hips reaching toward feet. The seated position removes lumbar compensation and isolates the hamstrings cleanly."},
     {id:"halfsplit",name:"Half-Split",hold:45,sides:true,intensity:3,tip:"Square both hips toward the floor — this doubles the stretch.",desc:"From a lunge, straighten the front leg and lower hips back. Flex the front foot, square both hips. The most intensive hamstring stretch outside of full splits."},
-    {id:"pnfham",name:"PNF Hamstring",hold:10,sides:true,intensity:3,tip:"Contract strongly, then fully release — that's the secret.",desc:"Lie on your back, one leg raised with a strap or towel. Press your leg into the strap for 10s (isometric), then fully relax and ease deeper. Produces significantly greater flexibility gains than passive stretching."},
+    {id:"pnfham",name:"PNF Hamstring",hold:10,sides:true,intensity:3,tip:"Contract strongly, then fully release — that's the secret.",desc:"Lie on your back, one leg raised. Press your heel toward the floor (isometric contract) for 10s, then fully relax and ease deeper. Produces significantly greater flexibility gains than passive stretching."},
     {id:"downdog",name:"Downward Dog",hold:45,sides:false,intensity:2,tip:"Alternate bending each knee to target both sides.",desc:"Hips toward ceiling, heels pressing to the floor. Stretches the entire posterior chain: hamstrings, calves, and lower back simultaneously."},
+    {id:"singlelegfold",name:"Single-Leg Forward Fold",hold:45,sides:true,intensity:2,tip:"Keep the standing knee soft — locking it strains the joint.",desc:"Stand on one leg, hinge forward and reach toward the floor. The unsupported version isolates one side and adds a balance and stability challenge to the stretch."},
+    {id:"deadbug_ham",name:"Supine Hamstring Reach",hold:40,sides:true,intensity:2,tip:"Dorsiflex your foot — this alone adds inches to the stretch.",desc:"Lie on your back, raise one leg as straight as possible and reach both hands toward the ankle. No strap needed. Flex the foot hard to engage the entire posterior chain."},
+    {id:"nordicprep",name:"Nordic Curl Preparation",hold:30,sides:false,intensity:3,tip:"Lower only as far as you can control — this is active, not passive.",desc:"Kneel with feet anchored under something heavy. Lean your torso forward slowly, resisting with the hamstrings. This active eccentric position is where most hamstring tears happen — and where the most gains are made."},
+    {id:"standham",name:"Standing Single-Leg Hamstring",hold:45,sides:true,intensity:2,tip:"Hinge from the hip — don't round the back.",desc:"Stand on one leg, extend the other forward with heel on a low surface. Hinge forward from the hips with a tall spine. Combines hamstring lengthening with a hip hinge pattern."},
   ]},
   "thoracic":{label:"Upper Back",color:"#57c4ff",combos:["neck","shoulders"],exercises:[
     {id:"foamthor",name:"Thoracic Foam Roll",hold:60,sides:false,intensity:2,tip:"Start at mid-back and move up one level every 60s.",desc:"Upper back on a foam roller, arms crossed over chest. Let the thoracic spine drape over the roller, breathing out to sink deeper. Move up segment by segment."},
@@ -1223,6 +1422,10 @@ const AREAS = {
     {id:"puppy",name:"Puppy Pose",hold:60,sides:false,intensity:2,tip:"Walk hands forward until the stretch is in the upper back — not just the shoulders.",desc:"From all fours, walk hands forward while hips stay above knees. Let chest sink toward the floor, arms long. Creates traction through the thoracic spine and opens the lats."},
     {id:"supinetwist",name:"Supine Twist",hold:60,sides:true,intensity:1,tip:"The longer you hold, the more the nervous system releases.",desc:"Lie on your back. Guide one knee across your body with the opposite hand. Look away. Every exhale allows more rotation. Decompresses thoracic facets and relieves tension."},
     {id:"seatedrot",name:"Seated Thoracic Rotation",hold:35,sides:true,intensity:2,tip:"Keep your pelvis anchored — all rotation from the thorax.",desc:"Sit cross-legged near a wall. Rotate your torso and place one hand on the wall behind you. Use the wall as leverage to deepen with each exhale."},
+    {id:"wallangel",name:"Wall Angel",hold:10,sides:false,intensity:2,tip:"Every part of your back must stay in contact with the wall.",desc:"Stand with your back flat against a wall, arms at 90°. Slowly slide arms upward into a Y shape while keeping everything touching the wall. Reveals and corrects thoracic stiffness and shoulder mobility deficits simultaneously."},
+    {id:"thoraciccar",name:"Thoracic CARs",hold:10,sides:true,intensity:2,tip:"Initiate from your sternum rotating, not your shoulders.",desc:"Seated cross-legged, hands on shoulders. Rotate your thorax as far as possible in one direction, then trace the largest circle you can with your elbow. Controlled Articular Rotations for the thoracic spine."},
+    {id:"babyspine",name:"Baby Cobra Hold",hold:30,sides:false,intensity:2,tip:"Drive through your hands but keep shoulders away from ears.",desc:"Lying on your stomach, press into hands and lift the chest. Keep hips down. Extends the thoracic spine in the direction it's most restricted — the opposite of all-day sitting."},
+    {id:"benchrot",name:"Kneeling Thoracic Rotation",hold:30,sides:true,intensity:2,tip:"Use your arm as a lever — not a crank.",desc:"Kneeling beside a bench or chair, place one forearm on the surface. Rotate your upper body open, reaching the top arm toward the ceiling. The best thoracic opener that requires nothing but floor space."},
   ]},
   "neck":{label:"Neck & Shoulders",color:"#ff9d57",combos:["thoracic","shoulders"],exercises:[
     {id:"levator",name:"Levator Scapula Stretch",hold:30,sides:true,intensity:2,tip:"Keep the shoulder blade actively depressed throughout.",desc:"Drop your ear toward your shoulder. Turn your chin 45° toward your armpit and tuck slightly. Place your hand gently on the back of your head. Breathe into the lateral neck."},
@@ -1231,6 +1434,10 @@ const AREAS = {
     {id:"suboccip",name:"Suboccipital Release",hold:60,sides:false,intensity:2,tip:"The release comes as a subtle give — be patient.",desc:"Lie on your back, thumbs or a rolled towel just below the skull base. Let the head sink into pressure. Breathe slowly. Releases the root cause of many tension headaches."},
     {id:"chintuck",name:"Chin Tuck Series",hold:10,sides:false,intensity:1,tip:"Head slides straight back on a shelf — no nodding.",desc:"Gently draw your chin straight back, creating a double chin. Hold 10s, release. Repeat 10 times. Resets forward head posture and decompresses the cervical spine."},
     {id:"crossbody",name:"Cross-Body Shoulder",hold:35,sides:true,intensity:1,tip:"Keep the elbow below shoulder height for best effect.",desc:"Bring one arm across your chest. Use the opposite hand to press it gently toward your body. Targets the posterior shoulder capsule — stiff from screen time and forward postures."},
+    {id:"neckcar",name:"Neck CARs",hold:10,sides:true,intensity:1,tip:"Move through the full range without any restriction.",desc:"Slowly take your head through its full range of motion — forward, side, back, other side — in the largest circle possible. Controlled Articular Rotations restore cervical joint health and identify restrictions."},
+    {id:"scalene",name:"Scalene Stretch",hold:30,sides:true,intensity:2,tip:"Never tilt your head all the way back — stop at 45°.",desc:"Tilt your head back and to one side at 45°. Use fingertips to gently anchor the collarbone down. Targets the scalene muscles — often compressed and tight from forward head posture and shallow breathing."},
+    {id:"sternocleido",name:"SCM Stretch",hold:30,sides:true,intensity:1,tip:"Look slightly up and away from the stretch side.",desc:"Tilt your head back slightly and rotate to face away from the side you're stretching. Lengthens the sternocleidomastoid — one of the most commonly tight muscles in people who sit at computers."},
+    {id:"facepull_stretch",name:"Rear Delt Doorway",hold:35,sides:false,intensity:1,tip:"Allow your upper back to round slightly into the doorframe.",desc:"Stand in a doorway, grip the frame at shoulder height, and allow your weight to pull your upper back into flexion and external rotation. Directly counteracts the pattern that leads to impingement."},
   ]},
   "lowerback":{label:"Lower Back",color:"#b857ff",combos:["hips","hamstrings"],exercises:[
     {id:"childs",name:"Child's Pose",hold:60,sides:false,intensity:1,tip:"Let your whole body be heavy — no holding, no bracing.",desc:"Kneel and sit back toward your heels. Reach arms forward, forehead to the floor. Breathe into your back body. One of the most therapeutic lower back stretches available."},
@@ -1239,6 +1446,10 @@ const AREAS = {
     {id:"happybaby",name:"Happy Baby",hold:60,sides:false,intensity:1,tip:"Rock gently side to side to massage the sacrum.",desc:"Lie on your back. Draw both knees to chest, grab the outside edges of your feet. Open knees wider than your torso. Creates traction in the lower back and hip joints simultaneously."},
     {id:"psoaslunge",name:"Psoas Lunge",hold:45,sides:true,intensity:2,tip:"The psoas attaches directly to the lumbar vertebrae — this is essential.",desc:"Deep lunge, back knee on the floor. Push hips forward and down, torso tall. Tight psoas muscles are one of the leading causes of lower back pain."},
     {id:"catcow",name:"Cat-Cow With Holds",hold:15,sides:false,intensity:1,tip:"Initiate each movement from the pelvis — not the shoulders.",desc:"On all fours. Slowly arch upward (cat), hold 15s. Then let your belly sink (cow), hold 15s. Repeat 8 times. Targets segmental lumbar mobility and relieves facet joint stiffness."},
+    {id:"supinepelvic",name:"Supine Pelvic Tilt",hold:10,sides:false,intensity:1,tip:"Breathe out as you flatten — don't hold your breath.",desc:"Lie on your back, knees bent. Flatten your lower back into the floor by tilting the pelvis — hold 10s, release. Resets the lumbar curve and activates the deep abdominal stabilizers."},
+    {id:"cobra",name:"Prone Press-Up",hold:30,sides:false,intensity:2,tip:"Keep your hips heavy on the floor throughout.",desc:"Lie face down, hands under shoulders. Press your upper body up, keeping hips grounded. Extends the lumbar spine in the direction most people never go — the antidote to flexion-dominant stiffness."},
+    {id:"windshield",name:"Windshield Wipers",hold:5,sides:false,intensity:2,tip:"Control the rotation — don't let your legs drop.",desc:"Lie on back, knees bent 90°, arms wide. Slowly lower both knees to one side, hold 5s, return. Rotational mobility for the lumbar spine combined with an oblique stretch."},
+    {id:"wallflatten",name:"Wall Lumbar Traction",hold:60,sides:false,intensity:1,tip:"Let gravity do the decompressing — zero effort required.",desc:"Lie on your back, calves resting on a chair or couch at 90°. Arms by sides. The position decompresses the lumbar discs and psoas simultaneously — useful after long flights or desk days."},
   ]},
   "shoulders":{label:"Shoulders",color:"#ff6b8a",combos:["thoracic","neck"],exercises:[
     {id:"threadneedle2",name:"Thread the Needle",hold:45,sides:true,intensity:2,tip:"Let the shoulder fully melt toward the floor.",desc:"On all fours, slide one arm under the body palm up. Let the shoulder drop to the floor, head resting. Targets thoracic rotation and posterior shoulder capsule simultaneously."},
@@ -1247,12 +1458,43 @@ const AREAS = {
     {id:"pendulum",name:"Shoulder Pendulum",hold:60,sides:true,intensity:1,tip:"Zero muscle activation — pure hanging and gravity.",desc:"Lean forward, one arm resting on a surface. Let the working arm hang freely and swing in gentle circles. Decompresses the shoulder joint and increases synovial fluid circulation."},
     {id:"latstretch",name:"Overhead Lat Stretch",hold:40,sides:true,intensity:2,tip:"Lean slightly away from the raised arm for a deeper pull.",desc:"Raise one arm overhead, bend the elbow. Use the other hand to press the elbow. Then lean laterally to also engage the lat and teres major for a compound release."},
     {id:"crossbody2",name:"Cross-Body Stretch",hold:35,sides:true,intensity:1,tip:"Keep elbow below shoulder height.",desc:"Bring one arm across your chest, use the opposite hand to press it toward your body. Targets the posterior shoulder capsule and rear deltoid — stiff from repeated forward motions."},
+    {id:"shouldercar",name:"Shoulder CARs",hold:10,sides:true,intensity:2,tip:"Keep your shoulder blade controlled — don't let it wing.",desc:"Standing, take your arm through the largest possible circle — forward, up, behind, and back down. Controlled Articular Rotations develop active shoulder mobility in ranges that stretching alone cannot reach."},
+    {id:"wallpec",name:"Wall Pec Stretch",hold:40,sides:true,intensity:2,tip:"The higher the arm, the more upper pec you hit.",desc:"Place one arm on a wall or corner at 90°. Rotate your chest away. The pectoralis major and minor are the primary drivers of rounded shoulder posture — this directly addresses the source."},
+    {id:"backstroke",name:"Prone Snow Angel",hold:10,sides:false,intensity:2,tip:"Keep your hands off the floor throughout the movement.",desc:"Lie face down, thumbs pointing up. Sweep arms from your sides overhead like a snow angel while keeping hands elevated. Activates the lower trapezius and serratus — the muscles that stop the shoulder from impinging."},
+    {id:"internrot",name:"Internal Rotation Stretch",hold:40,sides:true,intensity:2,tip:"Never force this — the shoulder joint is small and sensitive.",desc:"Reach one arm behind your back, palm facing out. Use the other hand to gently press the forearm upward. Addresses internal rotation deficits which are extremely common in athletes and overhead workers."},
   ]},
-  "calves":{label:"Calves",color:"#57e4ff",combos:["hamstrings","lowerback"],exercises:[
+  "calves":{label:"Calves",color:"#57e4ff",combos:["hamstrings","ankles"],exercises:[
     {id:"calfwall",name:"Standing Calf Stretch",hold:45,sides:true,intensity:2,tip:"Push your heel firmly into the floor — don't let it lift.",desc:"Step one foot back from a wall, keep it flat. Straight knee targets the gastrocnemius — the large calf muscle crossing the knee joint."},
     {id:"soleus",name:"Bent-Knee Calf Stretch",hold:45,sides:true,intensity:2,tip:"Bending the knee unlocks the soleus — which straight-leg misses entirely.",desc:"Same wall position but bend the back knee slightly. This targets the soleus — often the tighter of the two calf muscles and the primary source of Achilles issues."},
     {id:"calfdrop",name:"Step Edge Calf Drop",hold:45,sides:true,intensity:3,tip:"Body weight only — no added load until flexible enough.",desc:"Ball of one foot on a step edge. Lower the heel below the step level and hold. Creates both a deep stretch and strengthening stimulus — the most effective calf flexibility exercise."},
     {id:"dorsi",name:"Ankle Dorsiflexion Stretch",hold:40,sides:true,intensity:2,tip:"If your heel lifts, move your foot slightly forward.",desc:"Kneel, one foot flat on the floor in front. Push that knee forward over your toes while keeping the heel down. The single best way to assess and improve ankle dorsiflexion."},
+    {id:"toewalk",name:"Toe Walk Hold",hold:20,sides:false,intensity:2,tip:"Rise as high as possible on the balls of your feet.",desc:"Rise onto the balls of both feet and walk 10 steps, then hold at the top for 20s. Active calf strengthening in full plantar flexion — develops both flexibility and functional range."},
+    {id:"gastpnf",name:"PNF Calf Release",hold:10,sides:true,intensity:3,tip:"Push into the wall for 10s then let go completely.",desc:"In a wall calf stretch, push your toes into the wall (isometric contraction) for 10s then fully release and let the calf lengthen. PNF technique applied to the gastrocnemius."},
+    {id:"seatedcalf",name:"Seated Calf Stretch",hold:45,sides:true,intensity:1,tip:"Flex your foot as hard as you can to deepen the stretch.",desc:"Sit on the floor with legs straight. Reach forward and pull your toes toward you with both hands. Combines hamstring and calf lengthening in a comfortable seated position."},
+  ]},
+  "quads":{label:"Quads & Hip Flexors",color:"#ffb657",combos:["hips","lowerback"],exercises:[
+    {id:"recfem",name:"Rectus Femoris Stretch",hold:45,sides:true,intensity:2,tip:"Pull the foot toward your glute — not toward the side.",desc:"Lie on your stomach. Bend one knee and bring your foot toward your glute. The rectus femoris crosses both the hip and knee — this position stretches it fully."},
+    {id:"kneelquad",name:"Kneeling Quad Stretch",hold:45,sides:true,intensity:2,tip:"Squeeze the back glute to open the hip flexor further.",desc:"Kneeling lunge position. Reach back and grab the rear foot. Pull gently while keeping the torso tall and upright. Targets the quadriceps and hip flexors in one position."},
+    {id:"couch",name:"Couch Stretch",hold:60,sides:true,intensity:3,tip:"The more upright your torso, the more intense the hip flexor component.",desc:"Rear foot elevated on a couch or wall, front foot forward. Sink the hips down. Simultaneously stretches the rectus femoris and the hip flexors — the tightest combination in most athletes."},
+    {id:"standingquad",name:"Standing Quad Pull",hold:30,sides:true,intensity:1,tip:"Keep both knees aligned — don't let the stretch knee splay out.",desc:"Stand on one leg, pull the opposite foot toward your glute. Simple and immediate — the most accessible quad stretch for pre- or post-activity use."},
+    {id:"splitquad",name:"Half-Kneeling Hip Flexor",hold:60,sides:true,intensity:2,tip:"Tuck the pelvis under — don't hyperextend the lower back.",desc:"Drop into a deep lunge with back knee on the floor. Tuck your pelvis under and drive the hips forward. The iliopsoas — the deepest hip flexor — directly attaches to the lumbar spine. This is essential for back health."},
+    {id:"thomastest",name:"Thomas Position Stretch",hold:45,sides:true,intensity:2,tip:"Let the hanging leg drop with gravity — don't force it.",desc:"Lie on your back at the edge of a table or bed. Hug one knee to your chest, let the other leg hang off the edge. This position directly tests and stretches hip flexor tightness."},
+    {id:"wallquad",name:"Wall-Assisted Quad Stretch",hold:45,sides:true,intensity:2,tip:"Move the knee further from the wall to increase intensity.",desc:"Facing away from a wall, place one foot up on the wall behind you. Adjust your knee distance to control intensity. Provides more stability than a standing quad stretch, allowing deeper release."},
+    {id:"dragonpose",name:"Dragon Pose",hold:60,sides:true,intensity:3,tip:"Sink as low as possible — this is a deep tissue release, not a quick stretch.",desc:"Deep lunge with both hands inside the front foot. Drop the back knee and let the hips sink toward the floor. The most intensive hip flexor and quad opener — takes time to yield."},
+    {id:"supinequad",name:"Side-Lying Quad Stretch",hold:45,sides:true,intensity:1,tip:"Keep your hips stacked vertically — don't roll backward.",desc:"Lie on your side. Bend the top knee and pull your foot toward your glute with your top hand. The side-lying position isolates the stretch and makes it accessible for tight quads."},
+    {id:"quadcar",name:"Quad/Hip Flexor CARs",hold:10,sides:true,intensity:2,tip:"Explore the full range — backwards, sideways, in circles.",desc:"Standing, take one knee through a full controlled range of motion — lift high in front, swing behind, draw circles. Controlled Articular Rotations develop active range in the hip flexion pattern."},
+  ]},
+  "ankles":{label:"Ankles & Feet",color:"#c4a1ff",combos:["calves","quads"],exercises:[
+    {id:"anklecar",name:"Ankle CARs",hold:10,sides:true,intensity:1,tip:"Make the circle as large as possible — go to end range in each direction.",desc:"Seated or standing, take your ankle through the largest controlled circle possible. Controlled Articular Rotations restore full ankle joint health, critical for everything from running to squatting."},
+    {id:"toegrip",name:"Toe Spread & Grip",hold:10,sides:false,intensity:1,tip:"Most people can't spread their toes voluntarily — this is the starting point.",desc:"Seated, spread all toes as wide as possible, then curl them under hard. Alternate 10 times. Reactivates the intrinsic foot muscles lost from years of shoes. Foundation of all foot and ankle health."},
+    {id:"calfraise",name:"Single-Leg Calf Raise Hold",hold:30,sides:true,intensity:2,tip:"Rise as high as possible before holding — partial range defeats the purpose.",desc:"Rise onto one foot as high as possible, then hold the top position. Strengthens the calf in end-range plantar flexion — the weakest part for most people and key for injury prevention."},
+    {id:"ankledorsi",name:"Kneeling Ankle Mobility",hold:40,sides:true,intensity:2,tip:"Keep the heel flat — the moment it lifts, you've gone past your actual range.",desc:"Kneeling with one foot flat. Drive the knee directly over the little toe while keeping heel down. Dorsiflexion restriction is one of the most common causes of knee pain, hip tightness, and poor squat mechanics."},
+    {id:"bigtoex",name:"Big Toe Extension",hold:20,sides:true,intensity:1,tip:"Push actively into the extension — don't just pull passively.",desc:"Seated, pull the big toe upward toward the shin and hold. Big toe extension is critical for normal gait mechanics. Restriction here loads the plantar fascia and affects movement all the way up the kinetic chain."},
+    {id:"footdome",name:"Short Foot Exercise",hold:10,sides:true,intensity:1,tip:"Lift the arch without curling your toes — just shorten the foot.",desc:"Seated foot flat on the floor. Without curling toes, shorten the foot by drawing the ball of the foot toward the heel. This activates the intrinsic arch muscles that support the entire foot structure."},
+    {id:"heelwalk",name:"Heel Walk Hold",hold:20,sides:false,intensity:2,tip:"Keep your feet dorsiflexed the entire time — toes stay up.",desc:"Walk on your heels with toes raised for 10 steps, then hold for 20s. Strengthens the anterior tibialis and develops active dorsiflexion range — the functional complement to calf flexibility."},
+    {id:"gastmob",name:"Half-Kneeling Ankle Rock",hold:30,sides:true,intensity:2,tip:"Add a slight medial (inward) bias to mobilize the stiff outer ankle.",desc:"Half-kneeling, front foot flat. Rock the knee forward over the foot repeatedly, then hold at maximum range. The most effective warm-up and rehabilitation drill for ankle dorsiflexion."},
+    {id:"plantarflex",name:"Plantar Fascia Stretch",hold:30,sides:true,intensity:2,tip:"First thing in the morning — before you put your foot on the floor.",desc:"Seated, cross one foot over the knee. Pull all toes back toward the shin until you feel the arch. The most effective position for relieving plantar fasciitis and maintaining plantar fascia health."},
+    {id:"invertx",name:"Ankle Inversion Stretch",hold:30,sides:true,intensity:1,tip:"Don't force it — ligament tissue is slow to respond.",desc:"Seated, cross one foot over the opposite knee. Gently press the outer edge of the foot down and in. Mobilizes the ankle joint capsule medially — important for balanced joint health and sprains."},
   ]},
 };
 
@@ -1264,6 +1506,10 @@ const COMBOS_REASONS = {
   "thoracic+shoulders":"Rounded shoulders and stiff upper back are the same problem from different angles.",
   "lowerback+hamstrings":"Tight hamstrings tilt the pelvis and are one of the primary drivers of lower back pain.",
   "shoulders+neck":"The anterior shoulder pull that causes impingement originates from the upper trap and neck — address both.",
+  "quads+hips":"The hip flexors and quads share the same attachment point — always stretch both together.",
+  "quads+lowerback":"Tight hip flexors anteriorly tilt the pelvis and directly cause lower back pain.",
+  "calves+ankles":"The calf complex controls ankle dorsiflexion — you can't fix the ankle without addressing the calf.",
+  "ankles+quads":"Ankle restriction limits squat depth and forces the knee and hip to compensate.",
 };
 
 /* ════════════════════════════════════════════
@@ -1283,13 +1529,20 @@ const DAILY_RESET_PROGRAM = [
   { title:"Morning Mobility",         areas:["hips","lowerback"],              duration:10, focus:"Wake up stiff joints" },
   { title:"Full Posterior Chain",     areas:["hamstrings","calves","lowerback"],duration:18, focus:"Heel to lower back" },
   { title:"Shoulder & Spine Open",    areas:["shoulders","thoracic"],          duration:12, focus:"Thoracic + capsule" },
-  { title:"Hip Flexor Deep Dive",     areas:["hips","lowerback","hamstrings"], duration:16, focus:"Psoas & hip complex" },
+  { title:"Hip Flexor Deep Dive",     areas:["quads","hips","lowerback"],      duration:16, focus:"Psoas & hip complex" },
   { title:"Neck & Shoulder Reset",    areas:["neck","shoulders"],              duration:12, focus:"Tension headache relief" },
   { title:"Active Recovery",          areas:["hips","thoracic"],               duration:10, focus:"Low intensity restore" },
   { title:"Hamstring Focus",          areas:["hamstrings","calves"],           duration:12, focus:"Posterior leg line" },
   { title:"Spine Mobility",           areas:["thoracic","lowerback"],          duration:14, focus:"Full spinal rotation" },
-  { title:"Lower Limb Release",       areas:["hips","hamstrings","calves"],    duration:16, focus:"Legs & hips" },
+  { title:"Athlete Lower Body",       areas:["quads","hamstrings","ankles"],   duration:18, focus:"Full leg mobility" },
+  { title:"Foot & Ankle Reset",       areas:["ankles","calves"],               duration:10, focus:"Ground connection" },
+  { title:"Quad & Hip Complex",       areas:["quads","hips"],                  duration:14, focus:"Anterior chain release" },
   { title:"Restorative Full Body",    areas:["lowerback","hips","thoracic"],   duration:18, focus:"Complete restoration" },
+  { title:"Lower Limb Release",       areas:["hips","hamstrings","calves"],    duration:16, focus:"Legs & hips" },
+  { title:"Pre-Training Prep",        areas:["quads","ankles","hips"],         duration:12, focus:"Joint prep before load" },
+  { title:"Post-Run Recovery",        areas:["calves","hamstrings","ankles"],  duration:14, focus:"Reduce DOMS" },
+  { title:"Thoracic Freedom",         areas:["thoracic","shoulders"],          duration:12, focus:"Rotation & extension" },
+  { title:"Deep Hip Opener",          areas:["hips","lowerback","hamstrings"], duration:20, focus:"Full hip complex" },
 ];
 
 let todayPreset = null;  // kept for compatibility
@@ -2299,6 +2552,8 @@ function areaIcon(key,color){
     lowerback:`<path d="M13 12 Q23 8 33 12 L35 36 Q23 40 11 36 Z" stroke="${color}" stroke-width="1.5" fill="none"/><path d="M15 22 Q23 18 31 22" stroke="${color}" stroke-width="1" stroke-dasharray="3,2"/><path d="M15 30 Q23 26 31 30" stroke="${color}" stroke-width="1" stroke-dasharray="3,2"/>`,
     shoulders:`<circle cx="11" cy="21" r="7" stroke="${color}" stroke-width="1.5" fill="none"/><circle cx="35" cy="21" r="7" stroke="${color}" stroke-width="1.5" fill="none"/><path d="M11 21 Q23 17 35 21" stroke="${color}" stroke-width="1.5" fill="none"/>`,
     calves:`<path d="M17 6 Q15 22 13 38 Q15 43 19 43 Q23 41 23 43 Q23 41 27 43 Q31 43 33 38 Q31 22 29 6" stroke="${color}" stroke-width="1.5" fill="none"/>`,
+    quads:`<path d="M14 4 Q12 16 12 28 Q12 38 15 44 Q19 46 23 44 Q27 46 31 44 Q34 38 34 28 Q34 16 32 4" stroke="${color}" stroke-width="1.5" fill="none"/><path d="M18 18 Q23 14 28 18" stroke="${color}" stroke-width="1.2" fill="none" opacity=".6"/>`,
+    ankles:`<ellipse cx="23" cy="34" rx="10" ry="8" stroke="${color}" stroke-width="1.5" fill="none"/><path d="M13 34 Q10 28 12 22 Q15 16 23 14 Q31 16 34 22 Q36 28 33 34" stroke="${color}" stroke-width="1.5" fill="none"/><line x1="18" y1="42" x2="28" y2="42" stroke="${color}" stroke-width="1.5" stroke-linecap="round"/>`,
   };
   return icons[key]||`<circle cx="23" cy="23" r="16" stroke="${color}" stroke-width="1.5" fill="none"/>`;
 }
@@ -2818,7 +3073,7 @@ function showMilestoneFlash(pct){
 /* ════════════════════════════════════════════
    PHOTO LIBRARY — GitHub hosted
 ════════════════════════════════════════════ */
-const BASE = 'https://raw.githubusercontent.com/fmatioli06/movelab/main/images/';
+const BASE = 'https://cdn.jsdelivr.net/gh/fmatioli06/movelab/images/';
 const PHOTOS = {
 
   // ── HIPS & GLUTES ──────────────────────────────────
@@ -3061,6 +3316,20 @@ function loadExercise(idx){
 
   document.getElementById('p-ex-num').textContent = `EXERCISE ${idx + 1} OF ${pExs.length}`;
 
+  // Mobile info bar
+  const mibNum  = document.getElementById('mib-num');
+  const mibName = document.getElementById('mib-name');
+  const mibBadge= document.getElementById('mib-badge');
+  if(mibNum)  mibNum.textContent  = `EXERCISE ${idx + 1} OF ${pExs.length}`;
+  if(mibName) mibName.textContent = ex.name;
+  if(mibBadge){
+    mibBadge.textContent      = ex.areaLabel;
+    mibBadge.style.background = ex.areaColor + '14';
+    mibBadge.style.borderColor= ex.areaColor + '40';
+    mibBadge.style.color      = ex.areaColor;
+  }
+  closeInfoSheet(); // always close sheet when exercise changes
+
   const badge = document.getElementById('p-area-badge');
   badge.textContent       = ex.areaLabel;
   badge.style.background  = ex.areaColor + '12';
@@ -3101,7 +3370,22 @@ function loadExercise(idx){
   if(pr) pr.scrollTop = 0;
 }
 
-/* ── Up next ────────────────────────────── */
+/* ── Mobile info sheet toggle ───────────── */
+let infoSheetOpen = false;
+function toggleInfoSheet(){
+  infoSheetOpen = !infoSheetOpen;
+  const sheet  = document.getElementById('p-right');
+  const toggle = document.getElementById('mib-toggle');
+  if(sheet)  sheet.classList.toggle('peek', infoSheetOpen);
+  if(toggle) toggle.textContent = infoSheetOpen ? '↓' : '↑';
+}
+function closeInfoSheet(){
+  infoSheetOpen = false;
+  const sheet  = document.getElementById('p-right');
+  const toggle = document.getElementById('mib-toggle');
+  if(sheet)  sheet.classList.remove('peek');
+  if(toggle) toggle.textContent = '↑';
+}
 function renderUpNext(cur){
   const upcoming = pExs.slice(cur + 1, cur + 4);
   const box = document.getElementById('up-next-box');
@@ -3677,7 +3961,90 @@ function finishSession(){
   setTimeout(()=>{ initDailyReset(); initRecentSession(); }, 200);
 }
 
+/* ════════════════════════════════════════════
+   ONBOARDING — first open only
+════════════════════════════════════════════ */
+function initOnboarding(){
+  // Already onboarded — skip
+  if(localStorage.getItem('ml_onboarded')) return;
+
+  const ov = document.getElementById('onboarding');
+  if(!ov) return;
+  ov.style.display = 'flex';
+
+  // Build area tiles
+  const grid = document.getElementById('ob-areas');
+  let obSelected = [];
+
+  Object.entries(AREAS).forEach(([key, area]) => {
+    const tile = document.createElement('div');
+    tile.className = 'ob-area';
+    tile.innerHTML = `
+      <div class="ob-area-icon">
+        <svg width="28" height="28" viewBox="0 0 46 46" fill="none">${areaIcon(key, area.color)}</svg>
+      </div>
+      <div class="ob-area-name">${area.label}</div>
+      <div class="ob-area-check">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+          <polyline points="1.5,5 4,7.5 8.5,2" stroke="#08090f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>`;
+    tile.onclick = () => {
+      const idx = obSelected.indexOf(key);
+      if(idx > -1){
+        obSelected.splice(idx, 1);
+        tile.classList.remove('sel');
+      } else if(obSelected.length < 3){
+        obSelected.push(key);
+        tile.classList.add('sel');
+      }
+      updateObCta();
+    };
+    grid.appendChild(tile);
+  });
+
+  function updateObCta(){
+    const cta  = document.getElementById('ob-cta');
+    const hint = document.getElementById('ob-hint');
+    const n    = obSelected.length;
+    if(n === 0){
+      cta.classList.remove('ready');
+      hint.textContent = 'Select at least one area to continue';
+    } else {
+      cta.classList.add('ready');
+      const labels = obSelected.map(k => AREAS[k].label);
+      hint.textContent = n === 1
+        ? `${labels[0]} session ready`
+        : `${labels.slice(0,-1).join(', ')} + ${labels[labels.length-1]}`;
+    }
+    // Store for launchOnboarding
+    window._obSelected = obSelected;
+  }
+}
+
+function launchOnboarding(){
+  const sel = window._obSelected || [];
+  if(!sel.length) return;
+  dismissOnboarding();
+  qSelected  = [...sel];
+  qDuration  = 12;
+  launchQuick();
+}
+
+function skipOnboarding(){
+  dismissOnboarding();
+}
+
+function dismissOnboarding(){
+  localStorage.setItem('ml_onboarded', '1');
+  const ov = document.getElementById('onboarding');
+  if(!ov) return;
+  ov.classList.add('hiding');
+  setTimeout(() => { ov.style.display = 'none'; }, 400);
+}
+
 // Init
+initOnboarding();
 initHome();
 refreshStreak();
 </script>
