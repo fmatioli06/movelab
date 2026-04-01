@@ -270,11 +270,8 @@ body{background:var(--bg);color:var(--text);font-family:'Figtree',sans-serif;fon
 .ex-photo{
   width:100%;height:100%;object-fit:cover;
   position:absolute;inset:0;
-  transition:opacity .4s cubic-bezier(.4,0,.2,1);
   display:none;
 }
-.ex-photo.visible{ display:block; }
-.ex-photo.fade{ opacity:0; }
 /* Dark gradient at bottom so ring/controls stay readable over photos */
 .illus-wrap.has-photo::after{
   content:'';position:absolute;inset:0;pointer-events:none;z-index:1;
@@ -2825,60 +2822,60 @@ const BASE = 'https://raw.githubusercontent.com/fmatioli06/movelab/main/images/'
 const PHOTOS = {
 
   // ── HIPS & GLUTES ──────────────────────────────────
-  pigeon:         BASE + 'Pigeon Pose.png',
+  pigeon:         BASE + 'Pigeon%20Pose.png',
   '9090':         BASE + '90-90.png',
-  squat:          BASE + 'Deep Squat Hold.png',
-  lizard:         BASE + 'Lizard Pose.png',
-  frog:           BASE + 'Frog Stretch.png',
-  hiplunge:       BASE + 'Hip Flexor Lunge.png',
-  fig4:           BASE + '4 Stretch.png',
-  butterfly:      BASE + 'Butterfly Hold.png',
+  squat:          BASE + 'Deep%20Squat%20Hold.png',
+  lizard:         BASE + 'Lizard%20Pose.png',
+  frog:           BASE + 'Frog%20Stretch.png',
+  hiplunge:       BASE + 'Hip%20Flexor%20Lunge.png',
+  fig4:           BASE + '4%20Stretch.png',
+  butterfly:      BASE + 'Butterfly%20Hold.png',
 
   // ── HAMSTRINGS ─────────────────────────────────────
   standfold:      BASE + 'StandingFold.png',
-  wallham:        BASE + 'Wall Hamstring Strech.png',
-  seatfold:       BASE + 'Seated Forward Fold.png',
-  halfsplit:      BASE + 'Half Split.png',
-  pnfham:         BASE + 'PNF Hamstring.png',
-  downdog:        BASE + 'Downward Dog.png',
+  wallham:        BASE + 'Wall%20Hamstring%20Strech.png',
+  seatfold:       BASE + 'Seated%20Forward%20Fold.png',
+  halfsplit:      BASE + 'Half%20Split.png',
+  pnfham:         BASE + 'PNF%20Hamstring.png',
+  downdog:        BASE + 'Downward%20Dog.png',
 
   // ── UPPER BACK / THORACIC ──────────────────────────
-  foamthor:       BASE + 'Thoracic Foam Roll.png',
-  threadneedle:   BASE + 'Thread the Needle.png',
-  openbook:       BASE + 'open book.png',
-  puppy:          BASE + 'puppy pose.png',
-  supinetwist:    BASE + 'Supine Twist.png',
-  seatedrot:      BASE + 'seated thoracic Rotation.png',
+  foamthor:       BASE + 'Thoracic%20Foam%20Roll.png',
+  threadneedle:   BASE + 'Thread%20the%20Needle.png',
+  openbook:       BASE + 'open%20book.png',
+  puppy:          BASE + 'puppy%20pose.png',
+  supinetwist:    BASE + 'Supine%20Twist.png',
+  seatedrot:      BASE + 'seated%20thoracic%20Rotation.png',
 
   // ── NECK & SHOULDERS ───────────────────────────────
-  levator:        BASE + 'Leavator Scapula Stretch.png',
-  uppertrap:      BASE + 'Upper Trap Stretch.png',
-  doorway:        BASE + 'Doorway Opener.png',
-  suboccip:       BASE + 'Suboccipital Release.png',
-  chintuck:       BASE + 'Chin Tuck.png',
-  crossbody:      BASE + 'Cross-Body Should Stretch.png',
+  levator:        BASE + 'Leavator%20Scapula%20Stretch.png',
+  uppertrap:      BASE + 'Upper%20Trap%20Stretch.png',
+  doorway:        BASE + 'Doorway%20Opener.png',
+  suboccip:       BASE + 'Suboccipital%20Release.png',
+  chintuck:       BASE + 'Chin%20Tuck.png',
+  crossbody:      BASE + 'Cross-Body%20Should%20Stretch.png',
 
   // ── LOWER BACK ─────────────────────────────────────
-  childs:         BASE + 'Childs Pose.png',
-  kneehug:        BASE + 'Supine Knee Hug.png',
-  qbend:          BASE + 'QL Side Bend.png',
-  happybaby:      BASE + 'Happy Baby.png',
-  psoaslunge:     BASE + 'Psoas Lunge.png',
+  childs:         BASE + 'Childs%20Pose.png',
+  kneehug:        BASE + 'Supine%20Knee%20Hug.png',
+  qbend:          BASE + 'QL%20Side%20Bend.png',
+  happybaby:      BASE + 'Happy%20Baby.png',
+  psoaslunge:     BASE + 'Psoas%20Lunge.png',
   catcow:         BASE + 'Cat-Cow.png',
 
   // ── SHOULDERS ──────────────────────────────────────
-  threadneedle2:  BASE + 'Thread the Needle.png',
-  sleeper:        BASE + 'Sleeper Stretch.png',
-  doorway2:       BASE + 'Doorway Stretch.png',
-  pendulum:       BASE + 'Shoulder Pendulum.png',
-  latstretch:     BASE + 'Overhead Stretch.png',
-  crossbody2:     BASE + 'Cross-Body Should Stretch.png',
+  threadneedle2:  BASE + 'Thread%20the%20Needle.png',
+  sleeper:        BASE + 'Sleeper%20Stretch.png',
+  doorway2:       BASE + 'Doorway%20Stretch.png',
+  pendulum:       BASE + 'Shoulder%20Pendulum.png',
+  latstretch:     BASE + 'Overhead%20Stretch.png',
+  crossbody2:     BASE + 'Cross-Body%20Should%20Stretch.png',
 
   // ── CALVES ─────────────────────────────────────────
-  calfwall:       BASE + 'Standing Calf Stretch.png',
-  soleus:         BASE + 'Bent-Knee Calf.png',
-  calfdrop:       BASE + 'Step Calf.png',
-  dorsi:          BASE + 'Ankle Dorsiflexion.png',
+  calfwall:       BASE + 'Standing%20Calf%20Stretch.png',
+  soleus:         BASE + 'Bent-Knee%20Calf.png',
+  calfdrop:       BASE + 'Step%20Calf.png',
+  dorsi:          BASE + 'Ankle%20Dorsiflexion.png',
 
 };
 
@@ -3022,33 +3019,30 @@ function loadExercise(idx){
   const photoUrl  = PHOTOS[ex.id] || '';
 
   if(photoUrl && photoEl){
-    // Fade out current state
-    photoEl.classList.add('fade');
-    svgEl.classList.add('fade');
-    setTimeout(()=>{
-      // Show photo, hide SVG
-      photoEl.src = photoUrl;
-      photoEl.alt = ex.name;
-      photoEl.classList.add('visible');
-      photoEl.classList.remove('fade');
-      svgEl.style.display = 'none';
-      svgEl.classList.remove('fade');
-      if(illusWrap) illusWrap.classList.add('has-photo');
-    }, 400);
-    // Fallback: if photo fails to load, show SVG
+    // Set onerror BEFORE setting src
     photoEl.onerror = () => {
-      photoEl.classList.remove('visible');
       photoEl.style.display = 'none';
       svgEl.style.display   = 'block';
       svgEl.setAttribute('viewBox','0 0 300 400');
       svgEl.innerHTML = pose(ex.id, ex.areaColor);
       if(illusWrap) illusWrap.classList.remove('has-photo');
     };
+    photoEl.src = photoUrl;
+    photoEl.alt = ex.name;
+    photoEl.style.opacity = '0';
+    photoEl.style.display = 'block';
+    svgEl.style.display   = 'none';
+    if(illusWrap) illusWrap.classList.add('has-photo');
+    // Fade in once loaded
+    photoEl.onload = () => {
+      photoEl.style.transition = 'opacity .4s ease';
+      photoEl.style.opacity = '1';
+    };
   } else {
-    // No photo — use SVG illustration
-    photoEl.classList.remove('visible');
+    // No photo — use SVG
     photoEl.style.display = 'none';
-    svgEl.style.display   = 'block';
+    photoEl.onerror = null;
+    svgEl.style.display = 'block';
     svgEl.classList.add('fade');
     if(illusWrap) illusWrap.classList.remove('has-photo');
     setTimeout(()=>{
